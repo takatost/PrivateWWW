@@ -28,7 +28,9 @@
             var revert_time=Math.round((time-time_past)/1000)
             console.log('还有'+revert_time+'秒开始自动刷新得人品！')
         },1000)
-        setTimeout(location.reload,time)
+        setTimeout(function(){
+            location.reload()
+        },time)
         
         //随机攒
         var able=$('#userIfPin').val()
