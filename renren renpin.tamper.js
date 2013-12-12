@@ -35,22 +35,28 @@
         //随机攒
         var able=$('#userIfPin').val()
         if(able=='false'){
-            var success=0
-            var total=0
+            var success=[]
+            var status=[]
             var how_many=10
             for(var idx=0;idx<how_many;idx++){
                 new ajax({
                     url: "http://renpin.renren.com/action/collectrp",
                     onSuccess: function(g) { 
                         var f = parse(g.responseText);
+                        status.push(f.code)
                         if(f.code==0){
-                            success++
-                                total+=f.currRp
-                        } 
+                            success.push(f.currRp)
+                        }
+                        if(len(status)==how_many){
+                            var total=0
+                            for(var idx=0;idx<len(success);idx++){
+                                total+=success[idx]
+                            }
+                            console.log('你总共并发了'+how_many+'次随机攒请求，共有'+len(success)+'次成功攒到，你今天一共获得'+total+'个人品！')
+                        }
                     } 
                 })
             }
-            console.log('你总共并发了'+how_many+'次随机攒请求，共有'+success+'次成功攒到，你今天一共获得'+total+'个人品！')
         }
     }
 })();
