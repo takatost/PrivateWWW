@@ -27,17 +27,15 @@
         var real_do_time=0
         var send_time=0
         var success=[]
-        //这里时并发数，你需要弄清楚两个问题
-        //1.并发越多，消耗的人品越多
-        //2.但同时意味着抽的次数多
-        //3.举个例子，我写10,导致我的人品扣到负数，但我获得了两百多个大小奖品
-        //4.最后算来我居然赚了300多人品
-        var how_many_eachtime=1//小心
+        //这里是并发数，你需要弄清楚两个问题
+        //1.并发越多，并发成功的话相当于花一次的钱抽了多次
+        //2.次数多浏览器容易死
+        var how_many_eachtime=10//小心
         var auto_use=true
         var all_results=[0,10,50,100,200,500,1000,-1]
         //这里是并发一次的时间间隔设置，太低容易把浏览器搞死
         //太高并发成功率就低
-        var myTimer=setInterval(worker,3*1000)//每3s并发一次请求
+        var myTimer=setInterval(worker,1000)//1s
         
         function worker(){
             if(today_remain_time==0){
