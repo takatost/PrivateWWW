@@ -22,7 +22,7 @@
         }
         
         //抽奖吧
-        var today_remain_time=parseInt($('#nowRemainTime').val())
+        var today_remain_time=parseInt($('#nowRemainTime').text())
         var do_time=0
         var real_do_time=0
         var send_time=0
@@ -31,10 +31,16 @@
         var auto_use=true
         var all_results=[0,10,50,100,200,500,1000,-1]
         
-        while(today_remain_time){
+        var myTimer=setInterval(worker,3*1000)//每3s并发一次请求
+        
+        function worker(){
+            if(today_remain_time==0){
+                clearInterval(myTimer)
+                return
+            }
             for(var idx=0;idx<how_many_eachtime;idx++){
                 send_time++
-                ajax({url: "http://renpin.renren.com/mall/lottery/dolottery",method: "post",onSuccess: function(D) {
+                new ajax({url: "http://renpin.renren.com/mall/lottery/dolottery",method: "post",onSuccess: function(D) {
                     do_time++
                     var B = parse(D.responseText);
                     today_remain_time=B.remainCount
@@ -46,7 +52,7 @@
                             if(B.type==1){
                                 console.log('这不科学，你中话费了？')
                             }else{
-                                ajax({url: "http://renpin.renren.com/mall/lottery/use",method: "post",data: "id=" + B.id,onSuccess: function(C) {
+                                new ajax({url: "http://renpin.renren.com/mall/lottery/use",method: "post",data: "id=" + B.id,onSuccess: function(C) {
                                     var ret=parse(C.responseText)
                                     if(ret.code!=0){
                                         console.log('领取人品失败！')
@@ -70,7 +76,7 @@
                             }
                             count_get+=success[idx]
                         }
-                        alert('总共抽了'+real_do_time+'次奖，赢了'+win_nub+'次，今天总花费'+count_cost+'人品，得到'+count_get+'个人品！')
+                        alert('现在共抽了'+real_do_time+'次奖，赢了'+win_nub+'次，今天总花费'+count_cost+'人品，得到'+count_get+'个人品，还有'+today_remain_time+'次抽奖机会！')
                     }
                 }})
             }
