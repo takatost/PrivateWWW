@@ -52,7 +52,7 @@
                             for(var idx=0;idx<success.length;idx++){
                                 total+=success[idx]
                             }
-                            console.log('你总共并发了'+how_many+'次随机攒请求，共有'+success.length+'次成功攒到，你今天一共获得'+total+'个人品！')
+                            alert('你总共并发了'+how_many+'次随机攒请求，共有'+success.length+'次成功攒到，你今天一共获得'+total+'个人品！')
                         }
                     } 
                 })
