@@ -27,7 +27,7 @@
         var real_do_time=0
         var send_time=0
         var success=[]
-        var how_many_eachtime=10
+        var how_many_eachtime=1//这里不要动，并发是减分的我操，我的给减成负数了
         var auto_use=true
         var all_results=[0,10,50,100,200,500,1000,-1]
         
