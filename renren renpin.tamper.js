@@ -47,7 +47,7 @@
                         if(f.code==0){
                             success.push(f.currRp)
                         }
-                        if(len(status)==how_many){
+                        if(status.length==how_many){
                             var total=0
                             for(var idx=0;idx<len(success);idx++){
                                 total+=success[idx]
