@@ -30,60 +30,55 @@
         //这里是并发数，你需要弄清楚两个问题
         //1.并发越多，并发成功的话相当于花一次的钱抽了多次
         //2.次数多浏览器容易死
-        var how_many_eachtime=10//小心
+        var how_many=2000//小心
         var auto_use=true
         var all_results=[0,10,50,100,200,500,1000,-1]
-        //这里是并发一次的时间间隔设置，太低容易把浏览器搞死
-        //太高并发成功率就低
-        var myTimer=setInterval(worker,1000)//1s
+        for(var idx=0;idx<how_many;idx++){
         
-        function worker(){
             if(today_remain_time==0){
-                clearInterval(myTimer)
                 return
             }
-            for(var idx=0;idx<how_many_eachtime;idx++){
-                send_time++
-                new ajax({url: "http://renpin.renren.com/mall/lottery/dolottery",method: "post",onSuccess: function(D) {
-                    do_time++
-                    var B = parse(D.responseText);
-                    today_remain_time=B.remainCount
-                    if(B.code==0){
-                        real_do_time++
-                        console.log('中'+all_results[B.result])
-                        success.push(all_results[B.result])
-                        if(auto_use){
-                            if(B.type==1){
-                                console.log('这不科学，你中话费了？')
-                            }else{
-                                new ajax({url: "http://renpin.renren.com/mall/lottery/use",method: "post",data: "id=" + B.id,onSuccess: function(C) {
-                                    var ret=parse(C.responseText)
-                                    if(ret.code!=0){
-                                        console.log('领取人品失败！')
-                                    }else{
-                                        console.log('成功领取人品！')
-                                    }
-                                }})
-                            }
+            
+            send_time++
+            new ajax({url: "http://renpin.renren.com/mall/lottery/dolottery",method: "post",onSuccess: function(D) {
+                do_time++
+                var B = parse(D.responseText);
+                today_remain_time=B.remainCount
+                if(B.code==0){
+                    real_do_time++
+                    console.log('中'+all_results[B.result])
+                    success.push(all_results[B.result])
+                    if(auto_use){
+                        if(B.type==1){
+                            console.log('这不科学，你中话费了？')
+                        }else{
+                            new ajax({url: "http://renpin.renren.com/mall/lottery/use",method: "post",data: "id=" + B.id,onSuccess: function(C) {
+                                var ret=parse(C.responseText)
+                                if(ret.code!=0){
+                                    console.log('领取人品失败！')
+                                }else{
+                                    console.log('成功领取人品！')
+                                }
+                            }})
                         }
-                    }else{
-                        console.log('不是有效的抽奖动作')
                     }
-                    //check
-                    if(do_time==send_time){
-                        var count_cost=real_do_time*28
-                        var count_get=0
-                        var win_nub=0
-                        for(var idx=0;idx<success.length;idx++){
-                            if(success[idx]>0){
-                                win_nub++
-                            }
-                            count_get+=success[idx]
+                }else{
+                    console.log('不是有效的抽奖动作')
+                }
+                //check
+                if(do_time==send_time){
+                    var count_cost=real_do_time*28
+                    var count_get=0
+                    var win_nub=0
+                    for(var idx=0;idx<success.length;idx++){
+                        if(success[idx]>0){
+                            win_nub++
                         }
-                        alert('现在共抽了'+real_do_time+'次奖，赢了'+win_nub+'次，今天总花费'+count_cost+'人品，得到'+count_get+'个人品，还有'+today_remain_time+'次抽奖机会！')
+                        count_get+=success[idx]
                     }
-                }})
-            }
+                    console.log('现在共抽了'+real_do_time+'次奖，赢了'+win_nub+'次，今天总花费'+count_cost+'人品(由于并发的原因，此数并不准确)，得到'+count_get+'个人品，还有'+today_remain_time+'次抽奖机会！')
+                }
+            }})
         }
     }
 })();
