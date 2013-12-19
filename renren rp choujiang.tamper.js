@@ -100,7 +100,9 @@
         
         //在视图中实时提示
         $('body').append('<div class="sm_script_realtime_results" style="width:66%;height:77%;overflow-y:auto;position:fixed;top:20%;left:1%;background-color:red;color:white;z-index: 11010;"><div>～～～实时结果～～～</div></div>')
-        var real_results=$('.sm_script_realtime_results')
+        var real_results=$('.sm_script_realtime_results').on('DOMNodeInserted',function(){
+            $('.sm_script_realtime_results').scrollTop($('.sm_script_realtime_results')[0].scrollHeight)
+        })
         
         //提醒
         alert('请记住你当前的人品值，由于并行的原因，脚本无法统计真实花费的抽奖本钱，只能够统计你抽奖赢得了多少人品，领取了多少人品，在脚本运行结束后请手动刷新，自行计算纯收入！')
