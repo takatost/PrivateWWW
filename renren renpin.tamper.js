@@ -43,7 +43,7 @@
         },time)
         
         //倒计时提示
-        $('body').append('<span style="position:fixed;top:10px;right:10px;background-color:red;color:white;z-index: 11010;">还有<span class="sm_script_remain_sec">？</span>秒自动刷新</span>')
+        $('body').append('<span style="position:fixed;top:10px;right:10px;background-color:red;color:white;z-index: 11010;">还有<span class="sm_script_remain_sec">？</span>秒页面将自动刷新得人品</span>')
         var time_past=0
         setInterval(function(){
             time_past+=1000
