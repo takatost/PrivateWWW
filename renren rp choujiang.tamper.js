@@ -163,6 +163,8 @@
                                 real_results.append('<div>奖品id为'+B.id+'的类型为话费，暂不支持自动领取！</div>')
                             }
                         }
+                    }else{
+                        real_results.append('<div>请求被判定为无效！</div>')
                     }
                     
                     //检测是否所有请求都已完成
