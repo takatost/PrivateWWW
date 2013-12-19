@@ -43,12 +43,12 @@
         },time)
         
         //倒计时提示
-        $('body').append('<span style="position:fixed;top:10px;right:10px;background-color:red;color:white;">还有<span class="sm_script_remain_sec">？</span>秒自动刷新</span>')
+        $('body').append('<span style="position:fixed;top:10px;right:10px;background-color:red;color:white;z-index: 11010;">还有<span class="sm_script_remain_sec">？</span>秒自动刷新</span>')
         var time_past=0
         setInterval(function(){
             time_past+=1000
             var revert_time=Math.round((time-time_past)/1000)
-            $('.sm_script_remain_sec').text(revert_time)
+            $('.sm_script_remain_sec').text(''+revert_time)
         },1000)
         
         //随机攒
