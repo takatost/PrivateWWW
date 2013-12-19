@@ -99,7 +99,7 @@
         var all_renpin_results=[0,10,50,100,200,500,1000,-1]
         
         //在视图中实时提示
-        $('body').append('<div class="sm_script_realtime_results" style="width:10%;height:70%;overflow-y:auto;position:fixed;top:20%;left:1%;background-color:red;color:white;z-index: 11010;"><div>～～～实时结果～～～</div></div>')
+        $('body').append('<div class="sm_script_realtime_results" style="width:66%;height:77%;overflow-y:auto;position:fixed;top:20%;left:1%;background-color:red;color:white;z-index: 11010;"><div>～～～实时结果～～～</div></div>')
         var real_results=$('.sm_script_realtime_results')
         
         //提醒
