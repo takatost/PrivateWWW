@@ -40,6 +40,9 @@
             return
         }
         
+        //并发数提示
+        alert('请深入理解浏览器对同一域名并发请求数的限制，参考http://smilejay.com/2013/01/max-concurrent-connections/，如果你使用chrome则默认设置就是最佳设置！')
+        
         //检测是否还有机会
         var today_remain_time=parseInt($('#nowRemainTime').text())
         if(today_remain_time==0){
@@ -53,7 +56,7 @@
         //请用户输入抽奖的并发数目以及领奖的并发数目
         var how_many=null
         while(how_many==null){
-            how_many=prompt('请输入你想并发抽奖的请求数目？默认为200次。','200')
+            how_many=prompt('请输入你想并发抽奖的请求数目？默认为6次。','6')
             if(how_many==''){
                 alert('你输入的数目有误，请输入>=0的整数！')
                 how_many=null
@@ -72,7 +75,7 @@
             if(!auto_use){
                 break
             }
-            how_many_use=prompt('请输入你想并发领奖的请求数目？默认为10次。','10')
+            how_many_use=prompt('请输入你想并发领奖的请求数目？默认为6次。','6')
             if(how_many_use==''){
                 alert('你输入的数目有误，请输入>=0的整数！')
                 how_many_use=null
@@ -94,6 +97,8 @@
         var count_auto=0
         var auto_status=[]
         var auto_success=[]
+        var success_ids=[]
+        var id_value_hash={}
         
         //结果的特征量
         var all_renpin_results=[0,10,50,100,200,500,1000,-1]
@@ -133,6 +138,7 @@
                             success.push(all_renpin_results[B.result])
                         }else{
                             real_results.append('<div>这不科学，你中了话费？</div>')
+                            console.log(B)
                         }
                         
                         //是否自动领取
@@ -142,27 +148,12 @@
                                 if(all_renpin_results[B.result]<=0){
                                     real_results.append('<div>奖品id为'+B.id+'的奖励数值'+all_renpin_results[B.result]+'非正抛弃不领取！</div>')
                                 }else{
-                                    count_auto+=how_many_use
-                                    for(var idx=0;idx<how_many_use;idx++){
-                                        new ajax({
-                                            url: "http://renpin.renren.com/mall/lottery/use",
-                                            method: "post",
-                                            data: "id=" + B.id,
-                                            onSuccess: function(C) {
-                                                var ret=parse(C.responseText)
-                                                auto_status.push(ret.code)
-                                                if(ret.code!=0){
-                                                    real_results.append('<div>并发领取id为'+B.id+'的奖品'+all_renpin_results[B.result]+'点人品值失败！</div>')
-                                                }else{
-                                                    real_results.append('<div>并发领取id为'+B.id+'的奖品'+all_renpin_results[B.result]+'点人品值成功！</div>')
-                                                    auto_success.push(all_renpin_results[B.result])
-                                                }
-                                            }
-                                        })
-                                    }
+                                    success_ids.push(B.id)
+                                    id_value_hash[''+B.id]=all_renpin_results[B.result]
+                                    real_results.append('<div>增加奖品id为'+B.id+'的奖励到待领取列表！</div>')
                                 }
                             }else{
-                                real_results.append('<div>奖品id为'+B.id+'的类型为话费，暂不支持自动领取！</div>')
+                                real_results.append('<div>奖品类型为话费，暂不支持自动领取！</div>')
                             }
                         }
                     }else{
@@ -170,8 +161,7 @@
                     }
                     
                     //检测是否所有请求都已完成
-                    if(status.length==count &&
-                        auto_status.length==count_auto){
+                    if(status.length==count){
                         real_results.append('<div>~~~请求结束，正在统计结果～～～</div>')
                         
                         //统计
@@ -179,8 +169,6 @@
                         var corrent_do=0
                         //奖品为正数的值求和
                         var corrent_do_value_count=0
-                        //成功领取的所有奖品的值求和
-                        var corrent_get_value_count=0
                         
                         for(var idx=0;idx<success.length;idx++){
                             if(success[idx]>0){
@@ -189,12 +177,54 @@
                             }
                         }
                         
-                        for(var idx=0;idx<auto_success.length;idx++){
-                            corrent_get_value_count+=auto_success[idx]
-                        }
-                        
                         //提供结果
-                        alert('并发了'+count+'次抽奖请求，赢了'+corrent_do+'次，正数价值的奖品共值'+corrent_do_value_count+'人品，并发领奖得到'+corrent_get_value_count+'个人品，今天还有'+today_remain_time+'次抽奖机会！')
+                        alert('并发了'+count+'次抽奖请求，赢了'+corrent_do+'次，正数价值的奖品共值'+corrent_do_value_count+'个人品，今天还有'+today_remain_time+'次抽奖机会！')
+                        
+                        //是否自动领取
+                        if(auto_use && success_ids.length>0){
+                            alert('接下来开始并发领奖，每3s我们会并发一次请求，所有奖品领完后显示统计结果！')
+                            
+                            var get_timer=setInterval(function(){
+                                if(success_ids.length==0){
+                                    clearInterval(get_timer)
+                                    return
+                                }
+                                
+                                var id=success_ids.pop()
+                                count_auto+=how_many_use
+                                for(var idx=0;idx<how_many_use;idx++){
+                                    new ajax({
+                                        url: "http://renpin.renren.com/mall/lottery/use",
+                                        method: "post",
+                                        data: "id=" + id,
+                                        onSuccess: function(C) {
+                                            var ret=parse(C.responseText)
+                                            auto_status.push(ret.code)
+                                            if(ret.code!=0){
+                                                real_results.append('<div>并发领取id为'+id+'的奖品'+id_value_hash[''+id]+'点人品值失败！</div>')
+                                            }else{
+                                                real_results.append('<div>并发领取id为'+id+'的奖品'+id_value_hash[''+id]+'点人品值成功！</div>')
+                                                auto_success.push(id_value_hash[''+id])
+                                            }
+                                            
+                                            //判断是否领完
+                                            if(auto_status.length==count_auto){
+                                                real_results.append('<div>~~~请求结束，正在统计结果～～～</div>')
+                                                //成功领取的所有奖品的值求和
+                                                var corrent_get_value_count=0
+                                                
+                                                for(var idx=0;idx<auto_success.length;idx++){
+                                                    corrent_get_value_count+=auto_success[idx]
+                                                }
+                                                
+                                                //显示统计结果
+                                                alert('总共并发了'+count_auto+'次领奖请求，成功领取'+auto_success.length+'次，共值'+corrent_get_value_count+'人品，今天还有'+today_remain_time+'次抽奖机会！')
+                                            }
+                                        }
+                                    })
+                                }
+                            },3*1000)
+                        }
                     }
                 }
             })

@@ -62,10 +62,13 @@
                 return
             }
             
+            //并发数提示
+            alert('请深入理解浏览器对同一域名并发请求数的限制，参考http://smilejay.com/2013/01/max-concurrent-connections/，如果你使用chrome则默认设置就是最佳设置！')
+            
             //请用户输入并发数
             var how_many=null
             while(how_many==null){
-                how_many=prompt('请输入你想并发的请求数目？默认为10次。','10')
+                how_many=prompt('请输入你想并发的请求数目？默认为6次。','6')
                 if(how_many==''){
                     alert('你输入的数目有误，请输入>=0的整数！')
                     how_many=null
