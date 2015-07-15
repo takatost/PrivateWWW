@@ -112,7 +112,7 @@ GM_addStyle("\
 
             this.send = function(url, data) {
                 this.xmlhttp.Open(this.method, url, this.isAsync);
-                this.xmlhttp.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+                this.xmlhttp.setRequestHeader("Content-Type", "text/xml; charset=UTF-8");
 
                 if (!this.isAsync) {
                     this.xmlhttp.send(data);
