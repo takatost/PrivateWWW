@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         CITIC login from chrome helper
 // @author       Smite Chow
-// @include      *://e.test.bank.ecitic.com/citiccard/vender/index.jsp
+// @include      *://*.ecitic.com/citiccard/vender/index.jsp
 // ==/UserScript==
 GM_addStyle("\
             body, #land_top, #land_c, #land_bottom {\
