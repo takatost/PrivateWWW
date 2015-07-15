@@ -7,6 +7,9 @@ GM_addStyle("\
             body, #land_top, #land_c, #land_bottom {\
                 margin: 0 auto;\
             }\
+            #land_bottom {\
+                width: 564px;\
+            }\
             ");
 (function(){
     unsafeWindow.onload=function main() {
