@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         CITIC login from chrome helper
 // @author       Smite Chow
-// @include      *://*.ecitic.com/citiccard/vender/index.jsp
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
+// @include      *://*.ecitic.com/citiccard/vender/*.jsp
 // @include      *://*.ecitic.com/citiccard/vender.do?func=*
 // ==/UserScript==
 
 // adjust login form style
 GM_addStyle("body, #land_top, #land_c, #land_bottom { margin: 0 auto; }");
 GM_addStyle("#land_bottom { width: 564px; }");
+GM_addStyle("#head_table { background-size: cover; }");
 
 var window = unsafeWindow;
 
