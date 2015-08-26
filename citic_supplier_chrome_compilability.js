@@ -77,8 +77,8 @@ window.XMLProxy = function XMLProxy() {
     this.method = "post";
 
     this.initProxy = function() {
-        this.xmlDoc = new ActiveXObject("MSXML2.DOMDOCUMENT");
-        this.xmlhttp = new ActiveXObject("MSXML2.XMLHTTP");
+        this.xmlDoc = new window.ActiveXObject("MSXML2.DOMDOCUMENT");
+        this.xmlhttp = new window.ActiveXObject("MSXML2.XMLHTTP");
     };
 
     this.onGetResponse = function(xmldocument) {
@@ -92,7 +92,7 @@ window.XMLProxy = function XMLProxy() {
             this.xmlhttp.send(data);
             var Res = this.xmlhttp.responseText;
             Res = Res.replace(/&#x0;/g, "");
-            this.xmlDoc.loadXML(Res);
+            this.xmlDoc = this.xmlDoc.loadXML(Res);
             return this.xmlDoc;
         } else {
             var proxy = this;
@@ -114,7 +114,7 @@ window.XMLProxy = function XMLProxy() {
 
 // override menu page
 window.Redirect = window.inetpayRedirect = function(prarm) {
-    window.top.mainframe.src = "/citiccard/inetpay.do?func=" + prarm; 
+    window.top.mainframe.src = "/citiccard/vender.do?func=" + prarm; 
 };
 (function(){
     var all_id_suffix = [0,1,2,3,4,5,6,7,8,9,'logout'];
