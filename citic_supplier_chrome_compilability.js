@@ -1,6 +1,7 @@
 // ==UserScript==
 // @name         CITIC login from chrome helper
 // @author       Smite Chow
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 // @include      *://*.ecitic.com/citiccard/vender/*.jsp
 // @include      *://*.ecitic.com/citiccard/vender.do?func=*
 // @include      *://*.ecitic.com/citiccard/vender/epose/*.jsp
@@ -12,6 +13,51 @@ GM_addStyle("#land_bottom { width: 564px; }");
 GM_addStyle("#head_table, body { background-size: cover; }");
 
 var window = unsafeWindow;
+
+// tools
+
+// use this transport for "binary" data type from http://www.henryalgus.com/reading-binary-files-using-jquery-ajax/
+$.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
+    // check for conditions and support for blob / arraybuffer response type
+    if (window.FormData && ((options.dataType && (options.dataType == 'binary')) || (options.data && ((window.ArrayBuffer && options.data instanceof ArrayBuffer) || (window.Blob && options.data instanceof Blob)))))
+    {
+        return {
+            // create new XMLHttpRequest
+            send: function(headers, callback){
+                // setup all variables
+                var xhr = new XMLHttpRequest(),
+                    url = options.url,
+                    type = options.type,
+                    async = options.async || true,
+                    // blob or arraybuffer. Default is blob
+                    dataType = options.responseType || "blob",
+                    data = options.data || null,
+                    username = options.username || null,
+                    password = options.password || null;
+
+                xhr.addEventListener('load', function(){
+                    var data = {};
+                    data[options.dataType] = xhr.response;
+                    // make callback and send data
+                    callback(xhr.status, xhr.statusText, data, xhr.getAllResponseHeaders());
+                });
+
+                xhr.open(type, url, async, username, password);
+
+                // setup custom headers
+                for (var i in headers ) {
+                    xhr.setRequestHeader(i, headers[i] );
+                }
+
+                xhr.responseType = dataType;
+                xhr.send(data);
+            },
+            abort: function(){
+                jqXHR.abort();
+            }
+        };
+    }
+});
 
 // patch for window.ActiveXObject
 window.ActiveXObject = function(name, realObject) {
@@ -112,14 +158,44 @@ window.XMLProxy = function XMLProxy() {
     this.initProxy();
 };
 
+// patch CSSStyleDeclaration.prototype.removeAttribute
+window.CSSStyleDeclaration.prototype.removeAttribute = window.CSSStyleDeclaration.prototype.removeProperty;
+
 // override menu page
-window.Redirect = window.inetpayRedirect = function(prarm) {
-    window.top.mainframe.src = "/citiccard/vender.do?func=" + prarm; 
-};
-(function(){
+if(window.location.href.endsWith('menu.jsp')){
+    window.Redirect = window.inetpayRedirect = function(prarm) {
+        window.top.mainframe.src = "/citiccard/vender.do?func=" + prarm; 
+    };
     var all_id_suffix = [0,1,2,3,4,5,6,7,8,9,'logout'];
     for(var idx = 0; idx < all_id_suffix.length ; idx ++){
         var suffix = all_id_suffix[idx];
         window.document.getElementById('menu_' + suffix).style.display = ""; 
     }
-})();
+}
+
+// fix reversal page
+if(window.location.href.endsWith('ep_ordercancel')){
+    $.ajax({
+        url: '/citiccard/vender/js/calendar.js',
+        processData: false,
+        success: function(data){
+            // decode content
+            var dataView = new DataView(data);  
+            var decoder = new TextDecoder('gbk');  
+            data = decoder.decode(dataView);
+            
+            // replace fix
+            data = data.replace(/function String.prototype.trim/g, 'String.prototype.trim = function');
+            data = data.replace(/document.write\((.+)\);/g, 'document.getElementsByTagName("body")[0].insertAdjacentHTML( "beforeend", $1 );');
+            data = data.replace(/function document.onclick/g, 'document.onclick = function');
+            data = data.replace(/window.frames\("(\w+)"\)/g, 'window.frames["$1"]');
+            data = data.replace(/arguments.length==0/g, '0==0');
+            data = data.replace(/removeAttribute\('backgroundColor'\)/g, 'removeAttribute("background-color")');
+            
+            // append to dom
+            $('head').append('<script>' + data + '</script>');
+        }, 
+        responseType:'arraybuffer',
+        dataType: 'binary'
+    });
+}
