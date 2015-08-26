@@ -1,15 +1,15 @@
 // ==UserScript==
 // @name         CITIC login from chrome helper
 // @author       Smite Chow
-// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js
 // @include      *://*.ecitic.com/citiccard/vender/*.jsp
 // @include      *://*.ecitic.com/citiccard/vender.do?func=*
+// @include      *://*.ecitic.com/citiccard/vender/epose/*.jsp
 // ==/UserScript==
 
 // adjust login form style
 GM_addStyle("body, #land_top, #land_c, #land_bottom { margin: 0 auto; }");
 GM_addStyle("#land_bottom { width: 564px; }");
-GM_addStyle("#head_table { background-size: cover; }");
+GM_addStyle("#head_table, body { background-size: cover; }");
 
 var window = unsafeWindow;
 
@@ -111,3 +111,16 @@ window.XMLProxy = function XMLProxy() {
 
     this.initProxy();
 };
+
+// override menu page
+window.Redirect = window.inetpayRedirect = function(prarm) {
+    window.top.mainframe.src = "/citiccard/inetpay.do?func=" + prarm; 
+};
+(function(){
+    var all_id_suffix = [0,1,2,3,4,5,6,7,8,9,'logout'];
+    for(var idx = 0; idx < all_id_suffix.length ; idx ++){
+        var suffix = all_id_suffix[idx];
+        console.log(suffix)
+        window.document.getElementById('menu_' + suffix).style.display = ""; 
+    }
+})();
