@@ -120,7 +120,6 @@ window.Redirect = window.inetpayRedirect = function(prarm) {
     var all_id_suffix = [0,1,2,3,4,5,6,7,8,9,'logout'];
     for(var idx = 0; idx < all_id_suffix.length ; idx ++){
         var suffix = all_id_suffix[idx];
-        console.log(suffix)
         window.document.getElementById('menu_' + suffix).style.display = ""; 
     }
 })();
