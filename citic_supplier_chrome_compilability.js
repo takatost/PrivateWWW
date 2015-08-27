@@ -72,7 +72,10 @@ if(!window.showModalDialog){
         .replace(/center/g, 'centerScreen');
         new_window = window.open.call(this, arguments[0], '_blank', opts );
         new_window.onbeforeunload = function(){
-            Query('F','','','1');
+            if(window.location.href.endsWith('ep_returnorder'))
+                Query('F','','','1');
+            else
+                window.location.reload();
         };
         return new_window;
     };
@@ -197,8 +200,13 @@ if(window.location.href.endsWith('menu.jsp')){
     }
 }
 
-// fix reversal page
-if(window.location.href.endsWith('ep_ordercancel') || window.location.href.endsWith('ep_returnorder')){
+// fix calendar in all page
+if(window.location.href.endsWith('ep_ordercancel') || 
+   window.location.href.endsWith('ep_returnorder') || 
+   window.location.href.endsWith('ep_settlement') || 
+   window.location.href.endsWith('ep_searchlist') || 
+   window.location.href.endsWith('ep_downloadfile') || 
+   window.location.href.endsWith('ep_logsearch')){
     var follow_calander_style = function(){
         setInterval(function(){
             $('iframe').attr('style', $('#meizzCalendarLayer').attr('style'));
@@ -230,4 +238,21 @@ if(window.location.href.endsWith('ep_ordercancel') || window.location.href.endsW
         responseType:'arraybuffer',
         dataType: 'binary'
     });
+}
+
+// override download page
+if(window.location.href.endsWith('ep_downloadfile')){
+    window.download = function () {
+        var merchant_flag = "0"; // 新商户
+        var filename = "供应商管理平台交易对账日报表.xls";
+        var filedate = document.getElementById("query_begindate").value.trim();
+        var url = "/citiccard/vender.do?func=ftpDownload_epos&filename="+filename+"&merchantid="+merchantid+"&merchantflag="+merchant_flag+"&filedate="+filedate;
+        window.open(url, '_self');
+    };
+}
+
+// override upload page
+if(window.location.href.endsWith('ep_uploadcertfile') ||
+   window.location.href.endsWith('ep_downloadcertfile')){
+    setTimeout(InitializeBody, 1000);
 }
