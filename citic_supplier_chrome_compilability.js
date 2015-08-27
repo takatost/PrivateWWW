@@ -59,6 +59,11 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
     }
 });
 
+// patch Elment Object
+Object.defineProperty(window.Element.prototype, "text", {
+    get: function () { return this.textContent; }
+});
+
 // patch for window.ActiveXObject
 window.ActiveXObject = function(name, realObject) {
     if (name.indexOf('DOMDOCUMENT') != -1) {
@@ -199,7 +204,7 @@ if(window.location.href.endsWith('ep_ordercancel')){
 
             // append to dom
             $('head').append('<script>' + data + '</script>');
-            
+
             // fix calander position
             follow_calander_style();
         }, 
