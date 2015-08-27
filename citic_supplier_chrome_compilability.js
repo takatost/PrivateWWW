@@ -175,6 +175,11 @@ if(window.location.href.endsWith('menu.jsp')){
 
 // fix reversal page
 if(window.location.href.endsWith('ep_ordercancel')){
+    var follow_calander_style = function(){
+        setInterval(function(){
+            $('iframe').attr('style', $('#meizzCalendarLayer').attr('style'));
+        }, 100);
+    };
     $.ajax({
         url: '/citiccard/vender/js/calendar.js',
         processData: false,
@@ -183,7 +188,7 @@ if(window.location.href.endsWith('ep_ordercancel')){
             var dataView = new DataView(data);  
             var decoder = new TextDecoder('gbk');  
             data = decoder.decode(dataView);
-            
+
             // replace fix
             data = data.replace(/function String.prototype.trim/g, 'String.prototype.trim = function');
             data = data.replace(/document.write\((.+)\);/g, 'document.getElementsByTagName("body")[0].insertAdjacentHTML( "beforeend", $1 );');
@@ -191,9 +196,12 @@ if(window.location.href.endsWith('ep_ordercancel')){
             data = data.replace(/window.frames\("(\w+)"\)/g, 'window.frames["$1"]');
             data = data.replace(/arguments.length==0/g, '0==0');
             data = data.replace(/removeAttribute\('backgroundColor'\)/g, 'removeAttribute("background-color")');
-            
+
             // append to dom
             $('head').append('<script>' + data + '</script>');
+            
+            // fix calander position
+            follow_calander_style();
         }, 
         responseType:'arraybuffer',
         dataType: 'binary'
