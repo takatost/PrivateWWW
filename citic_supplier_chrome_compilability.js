@@ -5,6 +5,7 @@
 // @include      *://*.ecitic.com/citiccard/vender/*.jsp
 // @include      *://*.ecitic.com/citiccard/vender.do?func=*
 // @include      *://*.ecitic.com/citiccard/vender/epose/*.jsp
+// @include      *://*.ecitic.com/citiccard/vender/epose/*.jsp?*
 // ==/UserScript==
 
 // adjust login form style
@@ -58,6 +59,24 @@ $.ajaxTransport("+binary", function(options, originalOptions, jqXHR){
         };
     }
 });
+
+// patch window.showModalDialog
+if(!window.showModalDialog){
+    window.showModalDialog = function() {
+        var opts = arguments[2];
+        opts = opts
+        .replace(/;/g, ',')
+        .replace(/:/g, '=')
+        .replace(/dialogWidth/g, 'width')
+        .replace(/dialogHeight/g, 'height')
+        .replace(/center/g, 'centerScreen');
+        new_window = window.open.call(this, arguments[0], '_blank', opts );
+        new_window.onbeforeunload = function(){
+            Query('F','','','1');
+        };
+        return new_window;
+    };
+}
 
 // patch Elment Object
 Object.defineProperty(window.Element.prototype, "text", {
@@ -179,7 +198,7 @@ if(window.location.href.endsWith('menu.jsp')){
 }
 
 // fix reversal page
-if(window.location.href.endsWith('ep_ordercancel')){
+if(window.location.href.endsWith('ep_ordercancel') || window.location.href.endsWith('ep_returnorder')){
     var follow_calander_style = function(){
         setInterval(function(){
             $('iframe').attr('style', $('#meizzCalendarLayer').attr('style'));
