@@ -19,7 +19,7 @@ function getPatchedUrl(url) {
 $('.loop img, .photoThum img').each(function () {
     $(this).prop('src', getPatchedUrl($(this).prop('src')));
 });
-$('.loop a, .photoThum a').each(function () {
+$('.loop a, .photoThum a, #page a').each(function () {
     $(this).prop('href', getPatchedUrl($(this).prop('href')));
 });
 
@@ -51,4 +51,3 @@ $(function killNotice() {
         setTimeout(killNotice, 2E3);
     }
 });
-
