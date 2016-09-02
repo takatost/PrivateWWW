@@ -1,0 +1,42 @@
+@-moz-document url-prefix("https://go.dist.pub/http!/www.xiuren.org/"), domain("xiuren.org") {
+iframe, #menur, #announcement,#menu, #footer, #title, #xcy_fmt_ads80, #bannerIn,
+.post > p > a:nth-of-type(1), .post > p > a:nth-of-type(2),
+.post > p > br:nth-of-type(1), .post > p > br:nth-of-type(2), #bannerOut, #comments,
+#share, .fancybox-title {
+    display: none !important;
+}
+
+
+#wrap, #main, .post, .post > p, #post {
+    width: 100% !important;
+}
+
+#wrap, #main, .post, .post > p, #post, .loop {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#page {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    margin: 5px;
+}
+
+.fancybox-overlay, .fancybox-skin, .fancybox-outer, .fancybox-inner, .fancybox-wrap {
+    width: auto !important;
+    height: 100% !important;
+    top: 0 !important;
+    padding: 0 !important;
+}
+
+.fancybox-close {
+    top: 0 !important;
+    right: 0 !important;
+}
+
+.fancybox-image {
+    width: auto !important;
+    height: auto !important;
+}
+}
