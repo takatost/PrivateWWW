@@ -60,16 +60,19 @@ function playNextItem() {
 }
 
 $(document).on('player-state-changed', function (event, states) {
-    if (states.before === 'playing' && states.current === 'ready' && $('#autoplay').prop('checked')) {
+    if ((states.before === 'playing' || states.before === 'buffering') && states.current === 'ready' && $('#autoplay').prop('checked')) {
         playNextItem();
     }
 });
 
 (function watchPlayerState(before) {
     var state = getPlayerState();
-    if (before && before != state) {
+    console.log('>> ', state);
+    if (before && state && before != state) {
         $(document).trigger('player-state-changed', {before: before, current: state});
     }
+    // after exit full screen sometimes can't get state
+    state = state || before;
     setTimeout(function () {
         watchPlayerState(state);
     }, 2E3);
@@ -78,4 +81,3 @@ $(document).on('player-state-changed', function (event, states) {
 // === interactive ===
 
 $('.video-features').append('<input type="checkbox" id="autoplay" /><span style="color: red;">自动播放下一集</span>');
-
