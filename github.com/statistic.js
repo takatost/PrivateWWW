@@ -160,7 +160,9 @@ function checkRepoContributors() {
     if (!repos) {
         requestUserRepos();
         return;
+    } else if (unsafeWindow.location.href == `https://github.com/${user}?show_current_year_statistic`) {
+        nextRepo(JSON.parse(repos));
+    } else {
+        timer = setInterval(checkRepoContributors, 1000);
     }
-
-    timer = setInterval(checkRepoContributors, 1000);
 })();
