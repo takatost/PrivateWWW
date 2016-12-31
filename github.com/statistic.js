@@ -96,6 +96,11 @@ function nextRepo(repos) {
             continue;
         }
 
+        if (repo.size === 0) {
+            results.push(`repo: ${repo.full_name} 空repo`);
+            continue;
+        }
+
         goURL(url);
         return;
     }
